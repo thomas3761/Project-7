@@ -24,7 +24,11 @@ class SpaceJam(ShowBase):
 
         self.spaceStation = spaceJamClasses.SpaceStation(self.loader, self.render, "./Assets/SpaceStation1B/spaceStation.x", self.render, "SpaceStation", "./Assets/SpaceStation1B/SpaceStation1_Dif2.png", Vec3(1000, 5000, 80), Vec3(10, 10, 50), 5)
 
-        self.droneshowbase = spaceJamClasses.DroneShowBase(self.loader, self.render, "./Assets/DroneDefender/DroneDefender.obj", self.render, "DroneObject", "./Assets/DroneDefender/octotoad1_auv.png", Vec3(0, 0, 0), 1.0)
+        #self.droneshowbase = spaceJamClasses.DroneShowBase(self.loader, self.render, "./Assets/DroneDefender/DroneDefender.obj", self.render, "DroneObject", "./Assets/DroneDefender/octotoad1_auv.png", Vec3(0, 0, 0), 1.0)
+# new
+        self.Sentinal1 = spaceJamClasses.Orbiter(self.loader, self.render, self.rootAssetFolder + "/DroneDefender/DroneDefender.obj", self.render, "Drone", 6.0, self.rootAssetFolder, + "/DroneDefender/octotoad1_auv.png", self.planet5, 900, "MLB", self.Spaceship)
+        self.Sentinal1 = spaceJamClasses.Orbiter(self.loader, self.render, self.rootAssetFolder + "/DroneDefender/DroneDefender.obj", self.render, "Drone", 6.0, self.rootAssetFolder, + "/DroneDefender/octotoad1_auv.png", self.planet5, 500, "cloud", self.Spaceship)
+#
 
         self.cTrav = CollisionTraverser()
         self.pusher = CollisionHandlerPusher()

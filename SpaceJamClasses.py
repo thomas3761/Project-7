@@ -5,9 +5,10 @@ from direct.task.Task import TaskManager
 from typing import Callable 
 from CollideObjectBase import *
 from direct.gui.OnscreenImage import OnscreenImage
-from direct.interval.LerpInterval import LerpFunc # new
-from direct.particles.ParticleEffect import ParticleEffect # new
-import re # new
+from direct.interval.LerpInterval import LerpFunc
+from direct.particles.ParticleEffect import ParticleEffect 
+import re 
+import DefensePaths as defensePaths # new
 
 
 class Planet(SphereCollideObject):
@@ -24,7 +25,45 @@ class Planet(SphereCollideObject):
         
         self.loader = loader
         self.render = render
+# new 
+class Orbiter(SphereCollideObject):
+    numOrbits = 0
+    velocity =0.005
+    cloudTimer = 240
+    
+    def __init__(self, loader: Loader, taskMgr: TaskManager, modelPath: str, parentNode: NodePath, nodeName: str, scaleVec: Vec3, texPath: str, centralObject: PlacedObject, OrbitRadius: float, orbitType: str, staringAt: Vec3):
+        super(Orbiter, self).__init__(loader, modelPath, parentNode, nodeName, Vec3 (0,0,0), 3.2)
 
+        self.taskMgr = taskMgr
+        self.orbitType = orbitType
+        self.modelNode.setScale(scaleVec)
+        tex = loader.loadTexture(texPath)
+        self.OrbitObject = centralObject
+        self.OrbitRadius = OrbitRadius
+        self.staringAt = staringAt
+        Orbiter.numOrbits += 1
+        self.cloudClock = 0
+
+        self.taskFlag = "Traveler-" + str(Orbiter.numOrbits)
+        taskMgr.add(self.Orbit,self.taskFlag)
+
+    def Orbit(self, task):
+        if self.orbitType == "MLB":
+            positionVec = defensePaths.BaseballSeams(task.time * Orbiter.velocity, self.numOrbits,2.0)
+            self.modelNode.setPos(positionVec * self.OrbitObject.modelNode.grtPos())
+        
+        elif self.orbitType == "Cloud":
+            if self.cloudClock < Orbiter.cloudTimer:
+                self.cloudeClock += 1
+
+            else:
+                self.cloudTimer = 0
+                positionVec = defensePaths.cloud()
+                self.model.Node.setPos(positionVec * self.OrbitRadius + self.OrbitObject.modelNode.grtPos())
+ 
+        self.modelNode.lookAt(self.staringAt.modelNode)
+        return task.cont
+#  
 class Universe(InverseSphereCollideObject):
     def __init__(self, loader: Loader, render: NodePath, modelPath: str, parentNode: NodePath, nodeName: str, texPath: str, posVec: Vec3, scaleVec: float):
         super(Universe, self).__init__(loader, modelPath, parentNode, nodeName,Vec3 (0, 0, 0), 1.2)
@@ -63,14 +102,12 @@ class Spaceship(SphereCollideObject):# / player
 
         self.setKeyBindings()
 
-# new 
         self.cutExplode = 0
         self.ExplodeIntervals ={}
         self.traverser = traverser
         self.handler = CollisionHandlerEvent()
         self.handler.addInPattern('into')
         self.accept('into', self.HandleInto)
-#
 
         self.setKeyBindings()
         
@@ -174,7 +211,7 @@ class Spaceship(SphereCollideObject):# / player
             currentMissile = Missile(self.loader, './Assets/Phaser/phaser.egg', self.render, tag, posVec, 4.0)
             Missile.Intervals[tag] = currentMissile.modelNode.posInterval(2.0, travVec, startPos=posVec, fluid=1) 
             Missile.Intervals[tag].start()
-# new
+
             self.traverser.addCollider(currentMissile.collisionNode,self.handler)
 
         else:
@@ -243,7 +280,6 @@ class Spaceship(SphereCollideObject):# / player
         self.Hud.setTransparency(TransparencyAttrib.MAlpha)
         self.EnableHud()
 
-# new s
     def HandleInto(self, entry):
         fromNode = entry.getFromNodePath().getName()
         print("fromNode:" + fromNode)
@@ -268,7 +304,6 @@ class Spaceship(SphereCollideObject):# / player
         
         else:
             Missile.Intervals[shooter.finish]
-#
               
 class SpaceStation(CollisionCapsuleObject):
     def __init__(self, loader: Loader, render: NodePath, modelPath: str, parentNode: NodePath, nodeName: str, texPath: str, posVec: Vec3, scaleVec: float, radius: float):
@@ -320,7 +355,6 @@ class DroneShowBase(SphereCollideObject):
         self.loader = loader
         self.render = render
 
-# new
     def DroneDestroy(self, hitId, hitPosition):
         nodeId = self.render.find(hitId)
         nodeId.detachNode()
