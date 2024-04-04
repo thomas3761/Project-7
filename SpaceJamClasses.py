@@ -49,9 +49,9 @@ class Orbiter(SphereCollideObject):
 
     def Orbit(self, task):
         if self.orbitType == "MLB":
-            positionVec = defensePaths.BaseballSeams(task.time * Orbiter.velocity, self.numOrbits,2.0)
-            self.modelNode.setPos(positionVec * self.OrbitObject.modelNode.grtPos())
-        
+            positionVec = defensePaths.BaseballSeams(task.time * Orbiter.velocity, self.numOrbits, 2.0)
+            self.modelNode.setPos(positionVec + self.OrbitObject.modelNode.getPos())
+
         elif self.orbitType == "Cloud":
             if self.cloudClock < Orbiter.cloudTimer:
                 self.cloudeClock += 1
@@ -196,7 +196,6 @@ class Spaceship(SphereCollideObject):# / player
         self.modelNode.setR(self.modelNode.getR() + rate) 
         return Task.cont
 
-    
     def Fire(self):
         if self.missileBay > 0:
             travRate = self.missileDistance

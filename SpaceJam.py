@@ -103,9 +103,8 @@ class SpaceJam(ShowBase):
     def DrawBaseballSeams(self, centralObject, step, numSeams, radius=1): 
         for i in range(numSeams):
             position = defensePaths.BaseballSeams(step, numSeams, B=0.4) * radius
-            spaceJamClasses.DroneShowBase(self.loader, self.render, "./Assets/DroneDefender/DroneDefender.obj", self.render, "DroneObject", "./Assets/DroneDefender/octotoad1_auv.png", Vec3(0, 0, 0), 1.0, centralObject, f"Drone_{i}", position)
-        
-    
+            spaceJamClasses.DroneShowBase(self.loader, self.render, "./Assets/DroneDefender/DroneDefender.obj", self.render, "DroneObject", "./Assets/DroneDefender/octotoad1_auv.png", Vec3(0, 0, 0), 1.0)
+            
     def SetCamera(self):
         self.disableMouse()
         self.camera.reparentTo(self.Spaceship.modelNode)
